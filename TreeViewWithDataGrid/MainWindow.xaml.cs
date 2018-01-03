@@ -35,8 +35,18 @@ namespace TreeViewWithDataGrid
 			CollapsedDGR();
 			string[] s = this.Tag as string[];
 			command = s.ToList();
+			try
+			{
+				System.Diagnostics.Process.Start(@"C:\Users\admin\Documents\Visual Studio 2015\Projects\TreeDemo\TreeDemo\bin\Debug\TreeDemo.exe");    //调用该命令，在程序启动时打开Excel程序
+			}
+			catch
+			{
+			}
 		}
 
+		/// <summary>
+		/// 读取树数据
+		/// </summary>
 		private void ShowTreeView()
 		{
 			List<PropertyNodeItem> itemList = new List<PropertyNodeItem>();
@@ -143,6 +153,9 @@ namespace TreeViewWithDataGrid
 			this.treeview.ItemsSource = itemList;
 		}
 
+		/// <summary>
+		/// 读取DG数据
+		/// </summary>
 		private void ShowDataGrid()
 		{
 			DataTable dt = new DataTable("table");
@@ -155,6 +168,12 @@ namespace TreeViewWithDataGrid
 			datagrid.ItemsSource = dt.DefaultView;
 		}
 
+		/// <summary>
+		/// 遍历树加载DG
+		/// </summary>
+		/// <param name="list"></param>
+		/// <param name="dt"></param>
+		/// <returns></returns>
 		private DataTable LoadPropertyNodeItem(List<PropertyNodeItem> list,DataTable dt)
 		{
 			DataTable returndt = dt;
@@ -176,26 +195,30 @@ namespace TreeViewWithDataGrid
 			return returndt;
 		}
 
-
+		/// <summary>
+		/// 初始化添加tvi事件
+		/// </summary>
 		private void CollapsedDGR()
 		{
-			datagrid.UpdateLayout();
-			for(int i = 0;i < datagrid.ItemContainerGenerator.Items.Count;i++)
-			{
-				DataGridRow dgv = (DataGridRow)datagrid.ItemContainerGenerator.ContainerFromIndex(i);
-				if(dgv == null)
-				{
-					datagrid.UpdateLayout();
-					datagrid.ScrollIntoView(datagrid.Items[i]);
-					dgv = (DataGridRow)datagrid.ItemContainerGenerator.ContainerFromIndex(i);
-				}
-				DataRow dr = (dgv.Item as DataRowView).Row;
-				if(Convert.ToInt32(dr["FatherID"]) != 0)
-				{
-					dgv.Visibility = Visibility.Collapsed;
-				}
-			}
+			//节点收缩
+			//datagrid.UpdateLayout();
+			//for(int i = 0;i < datagrid.ItemContainerGenerator.Items.Count;i++)
+			//{
+			//	DataGridRow dgv = (DataGridRow)datagrid.ItemContainerGenerator.ContainerFromIndex(i);
+			//	if(dgv == null)
+			//	{
+			//		datagrid.UpdateLayout();
+			//		datagrid.ScrollIntoView(datagrid.Items[i]);
+			//		dgv = (DataGridRow)datagrid.ItemContainerGenerator.ContainerFromIndex(i);
+			//	}
+			//	DataRow dr = (dgv.Item as DataRowView).Row;
+			//	if(Convert.ToInt32(dr["FatherID"]) != 0)
+			//	{
+			//		dgv.Visibility = Visibility.Collapsed;
+			//	}
+			//}
 
+			//节点展开
 			treeview.UpdateLayout();
 			foreach(var item in treeview.Items)
 			{
@@ -204,6 +227,12 @@ namespace TreeViewWithDataGrid
 			}
 			SetNodeDPVisible(treeview);
 		}
+
+		/// <summary>
+		/// 节点展开
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void OnLoaded(object sender,RoutedEventArgs e)
 		{
 			TreeViewItem tvi = sender as TreeViewItem;
@@ -213,6 +242,10 @@ namespace TreeViewWithDataGrid
 			e.Handled = true;
 		}
 
+		/// <summary>
+		/// 遍历树添加事件
+		/// </summary>
+		/// <param name="control"></param>
 		private void SetNodeDPVisible(ItemsControl control)
 		{
 			if(control != null)
@@ -236,6 +269,11 @@ namespace TreeViewWithDataGrid
 			}
 		}
 
+		/// <summary>
+		/// TVI可视状态改变
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void TreeItem_IsVisibleChanged(object sender,DependencyPropertyChangedEventArgs e)
 		{
 			TreeViewItem tvi = sender as TreeViewItem;
@@ -250,6 +288,11 @@ namespace TreeViewWithDataGrid
 			}
 		}
 
+		/// <summary>
+		/// 被选择要选中对应的项
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void OnSelected(object sender,RoutedEventArgs e)
 		{
 			if(sender.GetType() == typeof(TreeViewItem))
@@ -267,6 +310,12 @@ namespace TreeViewWithDataGrid
 			}
 		}
 
+		/// <summary>
+		/// /选中DGR
+		/// </summary>
+		/// <param name="pni"></param>
+		/// <param name="check"></param>
+		/// <param name="visibile"></param>
 		private void SelectDataGridRow(PropertyNodeItem pni,bool? check,Visibility visibile)
 		{
 			for(int i = 0;i < datagrid.ItemContainerGenerator.Items.Count;i++)
@@ -299,6 +348,11 @@ namespace TreeViewWithDataGrid
 			}
 		}
 
+		/// <summary>
+		/// 选中TVI
+		/// </summary>
+		/// <param name="control"></param>
+		/// <param name="dr"></param>
 		private void SelectTreeViewItem(ItemsControl control,DataRow dr)
 		{
 			if(control != null)

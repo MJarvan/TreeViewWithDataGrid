@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -13,11 +14,26 @@ namespace TreeViewWithDataGrid
 	/// </summary>
 	public partial class App:Application
 	{
-		private void OnAppStartup(object sender,StartupEventArgs e)
+		protected override void OnStartup(StartupEventArgs e)
 		{
 			Window window = new MainWindow();
 			window.Tag = e.Args;
 			window.Show();
+		}
+
+		protected override void OnExit(ExitEventArgs e)     //该重写函数实现在程序退出时关闭某个进程
+		{
+			Process[] myProgress;
+			myProgress = Process.GetProcesses();          //获取当前启动的所有进程
+			foreach(Process p in myProgress)            //关闭当前启动的Excel进程
+			{
+				if(p.ProcessName == "TreeDemo")          //通过进程名来寻找
+				{
+					p.Kill();
+					return;
+				}
+			}
+			base.OnExit(e);
 		}
 	}
 }
