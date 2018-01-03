@@ -5,8 +5,52 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TreeViewWithDataGrid"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525">
-    <Grid>
-        
+        Title="MainWindow" Height="350" Width="525" Loaded="Window_Loaded">
+	<Grid>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="*"></ColumnDefinition>
+			<ColumnDefinition Width="2*"></ColumnDefinition>
+		</Grid.ColumnDefinitions>
+		<TreeView Margin="0,22,0,0" Grid.Column="0" Name="treeview">
+			<TreeView.ItemContainerStyle>
+				<Style TargetType="{x:Type TreeViewItem}">
+					<Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></Setter>
+					<Setter Property="Visibility" Value="{Binding Visibility, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></Setter>
+					<EventSetter Event="Loaded" Handler="OnLoaded"></EventSetter>
+					<EventSetter Event="Unloaded" Handler="OnLoaded"></EventSetter>
+					<EventSetter Event="Selected" Handler="OnSelected"></EventSetter>
+				</Style>
+			</TreeView.ItemContainerStyle>
+			<TreeView.ItemTemplate>
+				<HierarchicalDataTemplate DataType="{x:Type local:PropertyNodeItem}" ItemsSource="{Binding Path=Children}">
+						<TextBlock Margin="1.5" VerticalAlignment="Center" Text="{Binding DisplayName}"></TextBlock>
+				</HierarchicalDataTemplate>
+			</TreeView.ItemTemplate>
+		</TreeView>
+		<DataGrid Grid.Column="1" Name="datagrid" IsReadOnly="True" AutoGenerateColumns="False" SelectionUnit="FullRow" SelectionMode="Single">
+			<DataGrid.ItemContainerStyle>
+				<Style TargetType="{x:Type DataGridRow}">
+					<EventSetter Event="Selected" Handler="OnSelected"></EventSetter>
+				</Style>
+			</DataGrid.ItemContainerStyle>
+			<!--<DataGrid.Style>
+				<Style TargetType="{x:Type DataGrid}">
+					<Style.Triggers>
+						<DataTrigger Binding="{Binding IsExpanded}" Value="True">
+							<Setter TargetName="DataGridRow" Property="Visibility" Value="Visible"></Setter>
+						</DataTrigger>
+					</Style.Triggers>
+				</Style>
+			</DataGrid.Style>-->
+			<DataGrid.ItemTemplate>
+				<DataTemplate DataType="{x:Type local:PropertyNodeItem}"></DataTemplate>
+			</DataGrid.ItemTemplate>
+			<DataGrid.Columns>
+				<DataGridTextColumn Header="FatherID" Binding="{Binding FatherID}"></DataGridTextColumn>
+				<DataGridTextColumn Header="ID" Binding="{Binding ID}"></DataGridTextColumn>
+				<DataGridTextColumn Header="DisplayName" Binding="{Binding DisplayName}"></DataGridTextColumn>
+				<DataGridTextColumn Header="Name" Binding="{Binding Name}"></DataGridTextColumn>
+			</DataGrid.Columns>
+		</DataGrid>
     </Grid>
 </Window>

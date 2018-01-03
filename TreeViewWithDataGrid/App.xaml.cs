@@ -13,5 +13,11 @@ namespace TreeViewWithDataGrid
 	/// </summary>
 	public partial class App:Application
 	{
+		private void OnAppStartup(object sender,StartupEventArgs e)
+		{
+			Window window = new MainWindow();
+			window.Tag = e.Args;
+			window.Show();
+		}
 	}
 }
